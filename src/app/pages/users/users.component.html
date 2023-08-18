@@ -1,0 +1,147 @@
+<!-- HEADER -->
+<article class="mb-4 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+  <h1 class="text-3xl text-gray-800 font-semibold whitespace-nowrap text-ellipsis overflow-hidden">
+    Directorio de usuarios
+  </h1>
+  <button
+    class="text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-2 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg px-7 py-2 transition-colors duration-300"
+    type="button"
+    routerLink="/users/form"
+  >
+    Crear
+  </button>
+</article>
+<!-- HEADER -->
+<!-- CARD -->
+<article class="p-3 md:p-6 bg-white border border-gray-200 rounded-lg shadow">
+  <!-- SEARCH -->
+  <form class="mb-4">   
+    <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Buscar</label>
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <svg class="w-4 h-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+          </svg>
+        </div>
+        <input
+          class="block w-full p-4 pl-10 text-sm text-gray-600 border border-gray-300 rounded-lg bg-gray-50 focus:ring-1 focus:ring-indigo-300 focus:border-indigo-300 outline-none"
+          type="search"
+          id="default-search"
+          placeholder="Buscar usuario por nombre o DNI"
+          autocomplete="off"
+          (keyup)="inputSearch$.next($event)"
+        />
+    </div>
+  </form>
+  <!-- SEARCH -->
+  <!-- TABLE -->
+  <div class="h-[66vh] overflow-y-auto" *ngIf="(users$ | async) as users">
+    <ng-container *ngIf="users.length > 0; else emptySearchTemplate">
+      <section class="relative overflow-x-auto shadow-md rounded">
+        <table class="w-full text-left text-gray-600">
+          <thead class="text-sm text-gray-800 bg-gray-50 border-b">
+            <tr>
+              <th scope="col" class="px-6 py-3">Nombre</th>
+              <th scope="col" class="px-6 py-3">DNI</th>
+              <th scope="col" class="px-6 py-3">Celular</th>
+              <th scope="col" class="px-6 py-3 whitespace-nowrap">N° Incidencias</th>
+              <th scope="col" class="px-6 py-3">Última Incidencia</th>
+              <th scope="col" class="px-6 py-3">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="text-sm">
+            <tr
+              *ngFor="let user of users; let idx = index;"
+              [ngClass]="{
+                'bg-white': idx % 2 === 0,
+                'bg-gray-50': idx % 2 !== 0,
+                'border-b': users.length !== idx + 1
+              }"
+            >
+              <th scope="row" class="px-6 py-4 font-medium">
+                <div class="flex gap-2 items-center whitespace-nowrap">
+                  <img
+                      class="w-10 h-10 rounded-full"
+                      src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80"
+                      [alt]="user.name + ' ' + user.lastName"
+                  >
+                  <section class="mr-3 sm:mr-0">
+                    <p>
+                      {{ user.name | titlecase }} {{ user.lastName | titlecase }}
+                    </p>
+                    <small>{{ user.email }}</small>
+                  </section>
+                </div>
+              </th>
+              <td class="px-6 py-4">{{ user.dni }}</td>
+              <td class="px-6 py-4">{{ user.cellphone }}</td>
+              <td class="px-6 py-4">{{ user.incidents }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                {{ user.lastIncident ? (user.lastIncident | date: 'medium') : 'NA' }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <button
+                  type="button"
+                  class="rounded-lg text-sm p-2.5 mr-2 text-center text-indigo-500 hover:text-white border border-indigo-500 hover:bg-indigo-600 focus:ring-2 focus:outline-none focus:ring-indigo-300 transition-colors duration-300"
+                >
+                  <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 14">
+                    <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="rounded-lg text-sm p-2.5 mr-2 text-center text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-2 focus:outline-none focus:ring-yellow-300 transition-colors duration-300"
+                  (click)="editUser(user)"
+                >
+                  <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="m13.835 7.578-.005.007-7.137 7.137 2.139 2.138 7.143-7.142-2.14-2.14Zm-10.696 3.59 2.139 2.14 7.138-7.137.007-.005-2.141-2.141-7.143 7.143Zm1.433 4.261L2 12.852.051 18.684a1 1 0 0 0 1.265 1.264L7.147 18l-2.575-2.571Zm14.249-14.25a4.03 4.03 0 0 0-5.693 0L11.7 2.611 17.389 8.3l1.432-1.432a4.029 4.029 0 0 0 0-5.689Z"/>
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  class="rounded-lg text-sm p-2.5 text-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-2 focus:outline-none focus:ring-red-300 transition-colors duration-300"
+                  (click)="showDeletePopUp(user.dni)"
+                >
+                  <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
+                    <path d="M17 4h-4V2a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2H1a1 1 0 0 0 0 2h1v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1a1 1 0 1 0 0-2ZM7 2h4v2H7V2Zm1 14a1 1 0 1 1-2 0V8a1 1 0 0 1 2 0v8Zm4 0a1 1 0 0 1-2 0V8a1 1 0 0 1 2 0v8Z"/>
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </ng-container>
+  </div>
+  <!-- TABLE -->
+  <!-- LOADER MAP -->
+  <app-loader customClass="h-[66vh]"></app-loader>
+  <!-- LOADER MAP -->
+</article>
+<!-- CARD -->
+
+<!-- TEMPLATE SECTION -->
+<ng-template #emptySearchTemplate>
+  <section class="flex flex-col gap-2 justify-center items-center h-[66vh] p-2">
+    <img
+      class="w-96 mb-3"
+      src="assets/svg/search-not-found.svg"
+      alt="Search not found"
+    /> 
+    <h6 class="text-xl text-center text-gray-600 font-semibold">
+      Sin resultados, pruebe otro parámetro de búsqueda
+    </h6>
+    <p class="text-center text-gray-600">
+      La busqueda se debe realizar por DNI, nombres o apellidos
+    </p>
+  </section>
+</ng-template>
+<!-- TEMPLATE SECTION -->
+
+<!-- CONFIRM POP-UP -->
+<app-pop-up-confirm></app-pop-up-confirm>
+<!-- CONFIRM POP-UP -->
+
+<!-- SNACK BAR -->
+<app-snack-bar></app-snack-bar>
+<!-- SNACK BAR -->
