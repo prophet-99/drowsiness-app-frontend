@@ -142,8 +142,30 @@
           El email debe ser válido
         </p>
       </section>
+      <!-- EMAIL -->
+      <!-- PHOTO -->
+      <section>
+        <label class="block mb-2 text-sm font-medium text-gray-600" for="photoId">
+          Foto (jpg)
+        </label>
+        <input
+          class="block w-full p-2.5 outline-none bg-gray-50 border text-sm rounded-lg focus:ring-1"
+          [ngClass]="{
+            'border-gray-300 text-gray-600 focus:ring-indigo-300 focus:border-indigo-300': !hasGenericError('photo'),
+            'border-red-500 text-red-900 focus:ring-red-300 focus:border-red-300': hasGenericError('photo')
+          }"
+          id="photoId"
+          type="file"
+          accept=".jpg"
+          (change)="whenFileInputChange($event)"
+          #photoInput
+        />
+        <p class="mt-2 text-sm font-medium text-red-600" *ngIf="hasExtensionError('photo')">
+          Formato inválido, solo esta permitido: .jpg
+        </p>
+      </section>
     </article>
-    <!-- EMAIL -->
+    <!-- PHOTO -->
     <article class="flex justify-end gap-2">
       <button
         class="text-white font-medium rounded-lg px-7 py-2 transition-colors duration-300"

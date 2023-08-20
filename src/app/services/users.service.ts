@@ -36,6 +36,19 @@ export class UsersService {
       );
   }
 
+  public savePhoto(dni: string, file: File): Observable<MessageModel> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.httpClient
+      .post<MessageModel>(`${this.baseUrl}/${dni}/photo`, formData)
+      .pipe(
+        catchError<MessageModel, Observable<MessageModel>>((err) =>
+          throwError(() => err)
+        )
+      );
+  }
+
   public update(
     userRequest: UserRequest
   ): Observable<UserModel | MessageModel> {

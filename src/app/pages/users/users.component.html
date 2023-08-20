@@ -61,9 +61,10 @@
               <th scope="row" class="px-6 py-4 font-medium">
                 <div class="flex gap-2 items-center whitespace-nowrap">
                   <img
-                      class="w-10 h-10 rounded-full"
-                      src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=880&q=80"
-                      [alt]="user.name + ' ' + user.lastName"
+                    class="w-10 h-10 rounded-full object-cover"
+                    [src]="baseAPI + '/users/photo/' + user.dni + '.jpg'"
+                    [alt]="user.name + ' ' + user.lastName"
+                    appOnErrorImage
                   >
                   <section class="mr-3 sm:mr-0">
                     <p>
@@ -82,7 +83,13 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <button
                   type="button"
-                  class="rounded-lg text-sm p-2.5 mr-2 text-center text-indigo-500 hover:text-white border border-indigo-500 hover:bg-indigo-600 focus:ring-2 focus:outline-none focus:ring-indigo-300 transition-colors duration-300"
+                  class="rounded-lg text-sm p-2.5 mr-2 text-center border transition-colors duration-300"
+                  [ngClass]="{
+                    'text-indigo-500 hover:text-white border-indigo-500 hover:bg-indigo-600 focus:ring-2 focus:outline-none focus:ring-indigo-300': user.lastIncident,
+                    'text-indigo-300 border-indigo-300 cursor-not-allowed': !user.lastIncident
+                  }"
+                  [disabled]="!user.lastIncident"
+                  (click)="redirectToRouteWithUser(user, '/users/statistics-detail')"
                 >
                   <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 14">
                     <path d="M10 0C4.612 0 0 5.336 0 7c0 1.742 3.546 7 10 7 6.454 0 10-5.258 10-7 0-1.664-4.612-7-10-7Zm0 10a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z"/>
@@ -91,7 +98,7 @@
                 <button
                   type="button"
                   class="rounded-lg text-sm p-2.5 mr-2 text-center text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-2 focus:outline-none focus:ring-yellow-300 transition-colors duration-300"
-                  (click)="editUser(user)"
+                  (click)="redirectToRouteWithUser(user, '/users/form/' + user.dni)"
                 >
                   <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="m13.835 7.578-.005.007-7.137 7.137 2.139 2.138 7.143-7.142-2.14-2.14Zm-10.696 3.59 2.139 2.14 7.138-7.137.007-.005-2.141-2.141-7.143 7.143Zm1.433 4.261L2 12.852.051 18.684a1 1 0 0 0 1.265 1.264L7.147 18l-2.575-2.571Zm14.249-14.25a4.03 4.03 0 0 0-5.693 0L11.7 2.611 17.389 8.3l1.432-1.432a4.029 4.029 0 0 0 0-5.689Z"/>

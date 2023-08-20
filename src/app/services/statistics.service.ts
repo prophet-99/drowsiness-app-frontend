@@ -19,4 +19,15 @@ export class StatisticsService {
       .get<StatisticsModel[]>(`${this.baseUrl}?search=${searchParam}`)
       .pipe(shareReplay());
   }
+
+  public getAllByUserDNI(
+    userDni: string,
+    searchParam = ''
+  ): Observable<StatisticsModel[]> {
+    return this.httpClient
+      .get<StatisticsModel[]>(
+        `${this.baseUrl}/userDNI/${userDni}?search=${searchParam}`
+      )
+      .pipe(shareReplay());
+  }
 }

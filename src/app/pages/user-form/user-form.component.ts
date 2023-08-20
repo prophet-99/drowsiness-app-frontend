@@ -1,9 +1,11 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { Observable, mergeMap, of } from 'rxjs';
 
 import { SnackBarService } from 'src/app/components/snack-bar/snack-bar.service';
+import { MessageModel } from 'src/app/models/message.model';
 import { UserModel } from 'src/app/models/user.model';
 import { UsersService } from 'src/app/services/users.service';
 
@@ -16,6 +18,7 @@ import { UsersService } from 'src/app/services/users.service';
 export class UserFormComponent implements OnInit {
   public userForm!: FormGroup;
   private currentUser!: UserModel;
+  @ViewChild('photoInput') private photoInputRef!: ElementRef<HTMLInputElement>;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -56,6 +59,7 @@ export class UserFormComponent implements OnInit {
         dni ? this.currentUser.email : '',
         [Validators.required, Validators.pattern(/\S+@\S+\.\S+/)],
       ],
+      photo: [],
     });
   }
 
@@ -92,6 +96,13 @@ export class UserFormComponent implements OnInit {
     );
   }
 
+  public hasExtensionError(formControlName: string): boolean | undefined {
+    return (
+      this.userForm.get(formControlName)?.touched &&
+      this.userForm.get(formControlName)?.hasError('extension')
+    );
+  }
+
   public processUser(): void {
     if (this.userForm.invalid) return;
 
@@ -108,6 +119,12 @@ export class UserFormComponent implements OnInit {
         dni: this.userForm.value.dni,
         email: this.userForm.value.email.trim(),
       })
+      .pipe(
+        mergeMap((user) => {
+          const parsedUser = user as UserModel;
+          return this.saveImage(parsedUser.dni);
+        })
+      )
       .subscribe({
         next: () => {
           this.snackBarService.showSnackBar({
@@ -135,6 +152,12 @@ export class UserFormComponent implements OnInit {
         dni: this.userForm.value.dni,
         email: this.userForm.value.email.trim(),
       })
+      .pipe(
+        mergeMap((user) => {
+          const parsedUser = user as UserModel;
+          return this.saveImage(parsedUser.dni);
+        })
+      )
       .subscribe({
         next: () => {
           this.snackBarService.showSnackBar({
@@ -143,6 +166,7 @@ export class UserFormComponent implements OnInit {
           });
           this.closeSnackBar();
           this.userForm.reset();
+          this.photoInputRef.nativeElement.value = '';
         },
         error: (err: HttpErrorResponse) => {
           this.snackBarService.showSnackBar({
@@ -152,6 +176,38 @@ export class UserFormComponent implements OnInit {
           this.closeSnackBar();
         },
       });
+  }
+
+  private saveImage(dni: string): Observable<MessageModel | null> {
+    const userPhoto: File = this.userForm.value.photo;
+    if (userPhoto) {
+      return this.userService.savePhoto(dni, userPhoto);
+    }
+    return of(null);
+  }
+
+  public whenFileInputChange(evt: Event): void {
+    this.userForm.get('photo')?.markAsTouched();
+    const parsedEvt = evt.target as HTMLInputElement;
+    const file = parsedEvt.files ? parsedEvt.files[0] : null;
+
+    if (file) {
+      const fileExtension = file.name.slice(
+        ((file.name.lastIndexOf('.') - 1) >>> 0) + 2
+      );
+      const allowedExtensions = ['jpg'];
+      if (allowedExtensions.includes(fileExtension.toLowerCase())) {
+        this.userForm.patchValue({
+          photo: file,
+        });
+        this.userForm.get('photo')?.setErrors(null);
+      } else {
+        this.photoInputRef.nativeElement.value = '';
+        this.userForm.get('photo')?.setErrors({
+          extension: true,
+        });
+      }
+    }
   }
 
   private closeSnackBar(): void {

@@ -13,6 +13,7 @@ import { PopUpConfirmService } from 'src/app/components/pop-up-confirm/pop-up-co
 import { SnackBarService } from 'src/app/components/snack-bar/snack-bar.service';
 import { UserModel } from 'src/app/models/user.model';
 import { UsersService } from 'src/app/services/users.service';
+import { environment } from 'src/environments/environment.development';
 
 @Component({
   selector: 'app-users',
@@ -20,6 +21,7 @@ import { UsersService } from 'src/app/services/users.service';
   providers: [LoaderService, PopUpConfirmService, SnackBarService],
 })
 export class UsersComponent implements OnInit {
+  public baseAPI = environment.API_BASE_URL;
   public users$: Observable<UserModel[]> = EMPTY;
   public inputSearch$: Subject<KeyboardEvent> = new Subject();
 
@@ -48,9 +50,9 @@ export class UsersComponent implements OnInit {
       });
   }
 
-  public editUser(user: UserModel): void {
+  public redirectToRouteWithUser(user: UserModel, route: string) {
     this.userService.saveInSessionStorage(user);
-    this.router.navigateByUrl(`/users/form/${user.dni}`);
+    this.router.navigateByUrl(route);
   }
 
   public showDeletePopUp(dni: string): void {

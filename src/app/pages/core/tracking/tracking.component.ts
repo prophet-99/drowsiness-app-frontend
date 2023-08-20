@@ -1,12 +1,14 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
-import { EMPTY, Observable, Subscription, forkJoin, mergeMap } from 'rxjs';
+import { EMPTY, Observable, Subscription, forkJoin, mergeMap, of } from 'rxjs';
 import { Loader } from '@googlemaps/js-api-loader';
 
 import { LoaderService } from 'src/app/components/loader/loader.service';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { StatisticsWebSocketService } from 'src/app/services/statistics-websocket.service';
 import { StatisticsDTO } from 'src/app/models/dto/statistics.dto';
+import { environment } from 'src/environments/environment.development';
+import { StatisticsModel } from 'src/app/models/statistics.model';
 
 @Component({
   selector: 'app-tracking',
@@ -14,6 +16,9 @@ import { StatisticsDTO } from 'src/app/models/dto/statistics.dto';
   providers: [LoaderService],
 })
 export class TrackingComponent implements OnInit, OnDestroy {
+  @Input() serviceType!: 'GENERAL' | 'SPECIFIC';
+  @Input() userDNI!: string;
+  public baseAPI = environment.API_BASE_URL;
   public statistics$: Observable<StatisticsDTO[]> = EMPTY;
   private notificationSubscription!: Subscription;
   private MapRef!: typeof google.maps.Map;
@@ -34,7 +39,7 @@ export class TrackingComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // GOOGLE INITIALIZE
     const loader = new Loader({
-      apiKey: 'AIzaSyC8wvWbR2DvpUSTIk14pICq--GW6AYXSrE',
+      apiKey: environment.GOOGLE_API_KEY,
       version: 'weekly',
     });
     loader.load().then(async () => {
@@ -70,12 +75,21 @@ export class TrackingComponent implements OnInit, OnDestroy {
       });
   }
 
+  private getSpecificService(searchParam = ''): Observable<StatisticsModel[]> {
+    if (this.serviceType === 'SPECIFIC') {
+      return this.statisticsService.getAllByUserDNI(this.userDNI, searchParam);
+    }
+    return this.statisticsService.getAll(searchParam);
+  }
+
   private loadAllStatistics(searchParam = ''): void {
     if (!this.googleGeocoder) this.googleGeocoder = new this.GeocoderRef();
 
     this.statistics$ = this.loaderService.showLoaderUntilCompleted(
-      this.statisticsService.getAll(searchParam).pipe(
+      this.getSpecificService(searchParam).pipe(
         mergeMap((statistics) => {
+          if (statistics.length === 0) return of([]);
+          // IF DATA IS PRESENT
           const observablesRef = statistics.map(async (statisticSc) => {
             const response = await this.googleGeocoder.geocode({
               location: {
