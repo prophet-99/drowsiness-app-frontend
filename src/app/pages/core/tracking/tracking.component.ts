@@ -91,20 +91,25 @@ export class TrackingComponent implements OnInit, OnDestroy {
           if (statistics.length === 0) return of([]);
           // IF DATA IS PRESENT
           const observablesRef = statistics.map(async (statisticSc) => {
-            const response = await this.googleGeocoder.geocode({
-              location: {
-                lat: statisticSc.latitude,
-                lng: statisticSc.longitude,
-              },
-            });
             const statisticDTO: StatisticsDTO = {
               ...statisticSc,
-              siteAddress: '',
+              siteAddress: 'No geolocalizado, No disponible, -',
             };
-            if (response.results[0]) {
-              statisticDTO.siteAddress = response.results[0].formatted_address;
+            try {
+              const response = await this.googleGeocoder.geocode({
+                location: {
+                  lat: statisticSc.latitude,
+                  lng: statisticSc.longitude,
+                },
+              });
+              if (response.results[0]) {
+                statisticDTO.siteAddress =
+                  response.results[0].formatted_address;
+              }
+              return statisticDTO;
+            } catch (_) {
+              return statisticDTO;
             }
-            return statisticDTO;
           });
           return forkJoin(observablesRef);
         })
@@ -144,7 +149,7 @@ export class TrackingComponent implements OnInit, OnDestroy {
       position: { lat: latitude, lng: longitude },
       title: `lat: ${latitude}, lng: ${longitude}`,
     });
-    // INFOWINDOW
+    // INFO WINDOW
     if (this.googleInfoWindowRef) this.googleInfoWindowRef.close();
     else this.googleInfoWindowRef = new this.InfoWindowRef();
 
