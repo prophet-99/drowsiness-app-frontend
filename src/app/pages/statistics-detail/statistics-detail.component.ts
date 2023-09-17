@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { UsersService } from 'src/app/services/users.service';
 import { UserModel } from 'src/app/models/user.model';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-statistics-detail',

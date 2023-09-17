@@ -23,7 +23,7 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(__dirname + '/dist/drowsiness-detection-frontend'));
 
-// serve Angular index.html
+// SERVE ANGULAR index.html
 app.get('*', (req, res) => {
   res.sendFile(__dirname + '/dist/drowsiness-detection-frontend/index.html');
 });

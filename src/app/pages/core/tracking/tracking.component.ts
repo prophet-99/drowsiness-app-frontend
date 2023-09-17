@@ -7,8 +7,8 @@ import { LoaderService } from 'src/app/components/loader/loader.service';
 import { StatisticsService } from 'src/app/services/statistics.service';
 import { StatisticsWebSocketService } from 'src/app/services/statistics-websocket.service';
 import { StatisticsDTO } from 'src/app/models/dto/statistics.dto';
-import { environment } from 'src/environments/environment.development';
 import { StatisticsModel } from 'src/app/models/statistics.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tracking',

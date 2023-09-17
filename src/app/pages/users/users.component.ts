@@ -13,7 +13,7 @@ import { PopUpConfirmService } from 'src/app/components/pop-up-confirm/pop-up-co
 import { SnackBarService } from 'src/app/components/snack-bar/snack-bar.service';
 import { UserModel } from 'src/app/models/user.model';
 import { UsersService } from 'src/app/services/users.service';
-import { environment } from 'src/environments/environment.development';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-users',
