@@ -124,7 +124,7 @@ export class TrackingComponent implements OnInit, OnDestroy {
 
   public whenCallToUser(evt: Event, cellphone: string): void {
     evt.stopPropagation();
-    open(`tel:+51${cellphone}`);
+    location.href = `tel:+51${cellphone}`;
   }
 
   public whenIncidenceClick(

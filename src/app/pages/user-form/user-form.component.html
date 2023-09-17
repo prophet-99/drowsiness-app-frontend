@@ -168,6 +168,13 @@
     <!-- PHOTO -->
     <article class="flex justify-end gap-2">
       <button
+        class="text-indigo-500 hover:text-white border border-indigo-500 hover:bg-indigo-500 focus:bg-indigo-600 focus:ring-2 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg px-7 py-2 transition-colors duration-300"
+        type="button"
+        routerLink="/users"
+      >
+        Cancelar
+      </button>
+      <button
         class="text-white font-medium rounded-lg px-7 py-2 transition-colors duration-300"
         [ngClass]="{
           'bg-indigo-300 cursor-not-allowed': userForm.invalid,
@@ -177,13 +184,6 @@
         [disabled]="userForm.invalid"
       >
         Aceptar
-      </button>
-      <button
-        class="text-indigo-500 hover:text-white border border-indigo-500 hover:bg-indigo-500 focus:bg-indigo-600 focus:ring-2 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg px-7 py-2 transition-colors duration-300"
-        type="button"
-        routerLink="/users"
-      >
-        Cancelar
       </button>
     </article>
   </form>
