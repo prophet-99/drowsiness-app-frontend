@@ -6,12 +6,21 @@ import { UsersComponent } from './users/users.component';
 import { UserFormComponent } from './user-form/user-form.component';
 import { StatisticsDetailComponent } from './statistics-detail/statistics-detail.component';
 import { ErrorsComponent } from './errors/errors.component';
+import { authGuard } from '../guards/auth.guard';
 
 const routes: Routes = [
   { path: 'statistics', component: StatisticsComponent },
   { path: 'users', component: UsersComponent },
-  { path: 'users/form', component: UserFormComponent },
-  { path: 'users/form/:dni', component: UserFormComponent },
+  {
+    path: 'users/form',
+    component: UserFormComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'users/form/:dni',
+    component: UserFormComponent,
+    canActivate: [authGuard],
+  },
   { path: 'users/statistics-detail', component: StatisticsDetailComponent },
   { path: '**', component: ErrorsComponent },
 ];

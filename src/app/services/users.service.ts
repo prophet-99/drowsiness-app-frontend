@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { Observable, shareReplay, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { environment } from '../../environments/environment';
 import { UserModel } from '../models/user.model';
 import { UserRequest } from '../models/request/user.request';
 import { MessageModel } from '../models/message.model';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +16,18 @@ import { MessageModel } from '../models/message.model';
 export class UsersService {
   private baseUrl = `${environment.API_BASE_URL}/users`;
   private SESSION_STORAGE_NAME = 'DROWSINESS_TEMPORAL_USER';
+  private AUTHORIZATION_HEADER!: HttpHeaders;
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private authService: AuthService
+  ) {
+    this.authService.authorization$.subscribe((token) => {
+      this.AUTHORIZATION_HEADER = new HttpHeaders({
+        Authorization: `Basic ${token}`,
+      });
+    });
+  }
 
   public getAll(areActive: boolean, searchParam = ''): Observable<UserModel[]> {
     return this.httpClient
@@ -28,7 +39,9 @@ export class UsersService {
 
   public save(userRequest: UserRequest): Observable<UserModel | MessageModel> {
     return this.httpClient
-      .post<UserModel>(this.baseUrl, userRequest)
+      .post<UserModel>(this.baseUrl, userRequest, {
+        headers: this.AUTHORIZATION_HEADER,
+      })
       .pipe(
         catchError<UserModel, Observable<MessageModel>>((err) =>
           throwError(() => err)
@@ -41,7 +54,9 @@ export class UsersService {
     formData.append('file', file);
 
     return this.httpClient
-      .post<MessageModel>(`${this.baseUrl}/${dni}/photo`, formData)
+      .post<MessageModel>(`${this.baseUrl}/${dni}/photo`, formData, {
+        headers: this.AUTHORIZATION_HEADER,
+      })
       .pipe(
         catchError<MessageModel, Observable<MessageModel>>((err) =>
           throwError(() => err)
@@ -53,7 +68,9 @@ export class UsersService {
     userRequest: UserRequest
   ): Observable<UserModel | MessageModel> {
     return this.httpClient
-      .put<UserModel>(this.baseUrl, userRequest)
+      .put<UserModel>(this.baseUrl, userRequest, {
+        headers: this.AUTHORIZATION_HEADER,
+      })
       .pipe(
         catchError<UserModel, Observable<MessageModel>>((err) =>
           throwError(() => err)
@@ -63,7 +80,9 @@ export class UsersService {
 
   public delete(dni: string): Observable<MessageModel> {
     return this.httpClient
-      .delete<MessageModel>(`${this.baseUrl}/dni/${dni}`)
+      .delete<MessageModel>(`${this.baseUrl}/dni/${dni}`, {
+        headers: this.AUTHORIZATION_HEADER,
+      })
       .pipe(
         catchError<MessageModel, Observable<MessageModel>>((err) =>
           throwError(() => err)
@@ -80,7 +99,7 @@ export class UsersService {
     let parsedUser;
     try {
       parsedUser = JSON.parse(
-        sessionStorage.getItem('DROWSINESS_TEMPORAL_USER') || ''
+        sessionStorage.getItem(this.SESSION_STORAGE_NAME) || ''
       );
     } catch (err) {
       /* empty */
@@ -89,6 +108,6 @@ export class UsersService {
   }
 
   public deleteFromSessionStorage(): void {
-    sessionStorage.removeItem('DROWSINESS_TEMPORAL_USER');
+    sessionStorage.removeItem(this.SESSION_STORAGE_NAME);
   }
 }

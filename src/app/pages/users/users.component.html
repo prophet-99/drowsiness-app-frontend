@@ -7,6 +7,7 @@
     class="text-white bg-indigo-500 hover:bg-indigo-600 focus:ring-2 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg px-7 py-2 transition-colors duration-300"
     type="button"
     routerLink="/users/form"
+    *ngIf="tokenAuthorization !== ''"
   >
     Crear
   </button>
@@ -99,6 +100,7 @@
                   type="button"
                   class="rounded-lg text-sm p-2.5 mr-2 text-center text-yellow-400 hover:text-white border border-yellow-400 hover:bg-yellow-500 focus:ring-2 focus:outline-none focus:ring-yellow-300 transition-colors duration-300"
                   (click)="redirectToRouteWithUser(user, '/users/form/' + user.dni)"
+                  *ngIf="tokenAuthorization !== ''"
                 >
                   <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="m13.835 7.578-.005.007-7.137 7.137 2.139 2.138 7.143-7.142-2.14-2.14Zm-10.696 3.59 2.139 2.14 7.138-7.137.007-.005-2.141-2.141-7.143 7.143Zm1.433 4.261L2 12.852.051 18.684a1 1 0 0 0 1.265 1.264L7.147 18l-2.575-2.571Zm14.249-14.25a4.03 4.03 0 0 0-5.693 0L11.7 2.611 17.389 8.3l1.432-1.432a4.029 4.029 0 0 0 0-5.689Z"/>
@@ -108,6 +110,7 @@
                   type="button"
                   class="rounded-lg text-sm p-2.5 text-center text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-2 focus:outline-none focus:ring-red-300 transition-colors duration-300"
                   (click)="showDeletePopUp(user.dni)"
+                  *ngIf="tokenAuthorization !== ''"
                 >
                   <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
                     <path d="M17 4h-4V2a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2H1a1 1 0 0 0 0 2h1v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6h1a1 1 0 1 0 0-2ZM7 2h4v2H7V2Zm1 14a1 1 0 1 1-2 0V8a1 1 0 0 1 2 0v8Zm4 0a1 1 0 0 1-2 0V8a1 1 0 0 1 2 0v8Z"/>
@@ -148,7 +151,6 @@
 <!-- CONFIRM POP-UP -->
 <app-pop-up-confirm></app-pop-up-confirm>
 <!-- CONFIRM POP-UP -->
-
 <!-- SNACK BAR -->
 <app-snack-bar></app-snack-bar>
 <!-- SNACK BAR -->

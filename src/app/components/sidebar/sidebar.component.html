@@ -2,7 +2,7 @@
 <button
 	class="inline-flex items-center p-2 mt-2 ml-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
 	type="button"
-	(click)="enableSidebar(sidebarRef)"
+	(click)="enableSidebar()"
 >
   <span class="sr-only">Abrir sidebar</span>
   <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -56,6 +56,44 @@
 						</svg>
 					</a>
         </li>
+				<!-- AUTH -->
+        <li>
+          <a
+            class="flex items-center p-4 rounded-lg hover:bg-indigo-600 transition-colors duration-300"
+						href="javascript:void(0)"
+						*ngIf="tokenAuthorization === ''"
+						(click)="showLogin()"
+          >
+						<svg
+							class="w-5 h-5 text-white"
+							aria-hidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="currentColor"
+							viewBox="0 0 16 20"
+						>
+							<path d="M14 7h-1.5V4.5a4.5 4.5 0 1 0-9 0V7H2a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2Zm-5 8a1 1 0 1 1-2 0v-3a1 1 0 1 1 2 0v3Zm1.5-8h-5V4.5a2.5 2.5 0 1 1 5 0V7Z"/>
+						</svg>
+					</a>
+        </li>
+        <li>
+          <a
+            class="flex items-center p-4 rounded-lg hover:bg-indigo-600 transition-colors duration-300"
+						href="javascript:void(0)"
+						*ngIf="tokenAuthorization !== ''"
+						(click)="logout()"
+          >
+						<svg
+							class="w-5 h-5 text-white"
+							aria-hidden="true"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 16 16"
+						>
+							<path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h11m0 0-4-4m4 4-4 4m-5 3H3a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h3"/>
+						</svg>
+					</a>
+        </li>
+				<!-- AUTH -->
      </ul>
   </section>
 </aside>
@@ -64,8 +102,18 @@
 <div
 	class="bg-gray-900 bg-opacity-80 fixed inset-0 z-30"
 	*ngIf="enableBackdrop"
-	(click)="disableSidebar(sidebarRef)"
-	(keydown)="disableSidebar(sidebarRef)"
+	(click)="disableSidebar()"
+	(keydown)="disableSidebar()"
 	tabindex="0"
 ></div>
 <!-- BACKDROP -->
+
+<!-- AUTH LOGIN POP-UP -->
+<app-auth-login (isLoggedIn)="whenUserAccesses()"></app-auth-login>
+<!-- AUTH LOGIN POP-UP -->
+<!-- SNACK BAR -->
+<app-snack-bar></app-snack-bar>
+<!-- SNACK BAR -->
+<!-- CONFIRM POP-UP -->
+<app-pop-up-confirm></app-pop-up-confirm>
+<!-- CONFIRM POP-UP -->

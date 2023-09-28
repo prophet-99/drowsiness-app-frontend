@@ -13,6 +13,7 @@ import { PopUpConfirmService } from 'src/app/components/pop-up-confirm/pop-up-co
 import { SnackBarService } from 'src/app/components/snack-bar/snack-bar.service';
 import { UserModel } from 'src/app/models/user.model';
 import { UsersService } from 'src/app/services/users.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -24,9 +25,11 @@ export class UsersComponent implements OnInit {
   public baseAPI = environment.API_BASE_URL;
   public users$: Observable<UserModel[]> = EMPTY;
   public inputSearch$: Subject<KeyboardEvent> = new Subject();
+  public tokenAuthorization = '';
 
   constructor(
     private router: Router,
+    private authService: AuthService,
     private userService: UsersService,
     private loaderService: LoaderService,
     private popUpConfirmService: PopUpConfirmService,
@@ -34,6 +37,11 @@ export class UsersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // AUTH LOGIC
+    this.authService.authorization$.subscribe(
+      (token) => (this.tokenAuthorization = token)
+    );
+    // USERS LOGIC
     this.users$ = this.loaderService.showLoaderUntilCompleted(
       this.userService.getAll(true)
     );
