@@ -18,7 +18,7 @@ export class StatisticsWebSocketService {
 
   constructor() {
     this.stompClient = new Client({
-      webSocketFactory: () => new SockJS(`${this.baseUrl}/ws`),
+      webSocketFactory: () => new (SockJS as any)(`${this.baseUrl}/ws`),
     });
   }
 
