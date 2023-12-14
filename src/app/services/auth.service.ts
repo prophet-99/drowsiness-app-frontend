@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { BehaviorSubject, Observable, catchError, tap, throwError } from 'rxjs';
 
-import { environment } from 'src/environments/environment';
-import { AuthModel } from 'src/app/models/auth.model';
+import { environment } from '../../environments/environment';
+import { AuthModel } from '../models/auth.model';
 import { MessageModel } from '../models/message.model';
 
 @Injectable({
@@ -43,14 +43,14 @@ export class AuthService {
   }
 
   // SESSION STORAGE METHODS
-  private saveInSessionStorage(userAuth: AuthModel): void {
+  public saveInSessionStorage(userAuth: AuthModel): void {
     sessionStorage.setItem(
       this.SESSION_STORAGE_NAME,
       btoa(`${userAuth.username}:${userAuth.password}`)
     );
   }
 
-  private getFromSessionStorage(): string {
+  public getFromSessionStorage(): string {
     return sessionStorage.getItem(this.SESSION_STORAGE_NAME) || '';
   }
 
